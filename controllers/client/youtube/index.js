@@ -21,6 +21,7 @@ const getSearchResults = asyncHandler(async (req, res) => {
 })
 const postSearchResults = asyncHandler( async()=> {
     const entity_obj=await entityDefinitionSchema.findOne({entity_id:'api_key'});
+    if(!entity_obj) return;
     const api_key_array=entity_obj.definition;
     //find the api key whoose count is less than the api_key_limit and increase the count by 1 and save the record
     const payload=api_key_array.find(key=>key.count<api_key_limit);

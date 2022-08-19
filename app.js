@@ -97,8 +97,8 @@ const YoutubeController=require('@controller/client/youtube');
 // YoutubeController.deleteSearchResults();
 YoutubeController.postSearchResults();
 cron.schedule('*/2 * * * *', () => {
-  // YoutubeController.deleteSearchResults();
-  // YoutubeController.postSearchResults();
+  YoutubeController.deleteSearchResults();
+  YoutubeController.postSearchResults();
   console.log('running a task every two minutes', new Date());
   
 });

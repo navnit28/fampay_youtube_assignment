@@ -1,6 +1,11 @@
 const Redis = require('ioredis');
 
-const redis_bus = new Redis(process.env.REDIS_URI);
+const redis_bus = new Redis({
+  host: 'redis',
+  port: 6379,
+  password: '',
+  db: 0,
+});
 const operationsErrorHandler = async (err, req, res, next) => {
   try {
     if (res.headersSent) {
