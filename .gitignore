@@ -1,0 +1,17 @@
+.elasticbeanstalk/
+worker/
+rem.js
+quiz/
+extras/
+.env
+keycloak.json
+node_modules/
+test.js
+.idea/aws.xml
+.idea/checkstyle-idea.xml
+.idea/finllect.iml
+.idea/inspectionProfiles/Project_Default.xml
+.idea/libraries/dist.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml

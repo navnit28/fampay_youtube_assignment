@@ -1,0 +1,79 @@
+{
+
+    "errors.user.notfound": {
+        "status": 404,
+        "message": "User not found"
+    },
+
+    "errors.entity.notfound": {
+        "status": 404,
+        "message": "Entity not found"
+    },
+
+    "401:Unauthorized": {
+        "status": 401,
+        "message": "Unauthorized"
+    },
+
+    "errors.user.unauthorized": {
+        "status": 401,
+        "message": "Unauthorized or invalid signature"
+    },
+
+    "errors.generic.notfound": {
+        "status": 404,
+        "message": "Entity Not Found"
+    },
+
+    "errors.generic.invalidfields": {
+        "status": 400,
+        "message": "Invalid field(s)"
+    },
+    "errors.scholarship.cant.initiate": {
+        "status": 403,
+        "message": "You cannot offer a scholarship to this player because they have not signed up on the platform or do no have the player role"
+    },
+    "errors.scholarship.cant.cancelactive": {
+        "status": 400,
+        "message": "You cannot cancel an active scholarship before the sponsorship period"
+    },
+    "errors.scholarship.cant.cancelcancelled": {
+        "status": 400,
+        "message": "You cannot cancel an already cancelled scholarship"
+    },
+    "errors.scholarship.cant.acceptoffer": {
+        "status": 403,
+        "message": "You are unable to accept this scholarship offer"
+    },
+    "errors.scholarship.not.participant": {
+        "status": 403,
+        "message": "You are unable to carry out this action because you are not a participant in this scholarship offer"
+    },
+    "errors.scholarship.cant.initiate.concurrent": {
+        "status": 409,
+        "message": "You are unable to initiate a new offer because you already have an ongoing offer with this user"
+
+    },
+    "errors.scholarship.player.alreadysponsored": {
+        "status": 409,
+        "message": "You are unable to initiate a new offer because this player is already sponsored"
+
+    },
+    "errors.scholarship.alreadysponsored": {
+        "status": 409,
+        "message": "You are unable to accept this offer because you are sponsored"
+
+    },
+    "errors.bookmark.invalidformat": {
+        "status": 400,
+        "message": "Invalid format of bookmark"
+    },
+    "errors.bookmark.alreadyexists": {
+        "status": 409,
+        "message": "Bookmark already exists"
+    },
+    "errors.player.doesnotexist.ingame": {
+        "status": 404,
+        "message": "This Player wallet isn't linked to any NFTWorlds account ingame"
+    }
+}
