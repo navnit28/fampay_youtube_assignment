@@ -8,7 +8,7 @@ class YouTubeProvider {
     }
 
   async getSearchResults(api_key) {
-    const api_path=`?part=snippet&q=top india news&type=video&key=${api_key}&order=date&publishedAfter=2022-08-18T00:00:00Z`
+    const api_path=`?part=snippet&q=news&type=video&key=${api_key}&order=date&publishedAfter=2022-08-18T00:00:00Z`
     const resp= await this.endpoint.search
     .get(api_path)
     // console.log(resp.data)
