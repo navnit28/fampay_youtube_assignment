@@ -51,8 +51,9 @@ const searchVideos = asyncHandler( async(req, res) => {
       });
       console.log("filter",filter);
     const videos=await youtubeSchema.find({
-        $text: { $search: req.query.q }
-    }).sort(sort).skip(skip).limit(limit).exec();
+        $text: { $search: req.query.q }},
+        {score: { $meta: "textScore" } }
+    ).sort({ score: { $meta: "textScore" } }).skip(skip).limit(limit).exec();
     res.json({
         "data":videos
     })
