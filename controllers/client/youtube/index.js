@@ -5,15 +5,15 @@ const youtubeSchema=require('@model/videoSchema');
 const aqp = require('api-query-params');
 const entityDefinitionSchema=require('@model/entityDefinitionSchema');
 const Redis = require('ioredis');
-// const redis_bus = new Redis({
-//   host: 'redis',
-//   port: 6379,
-//   password: '',
-//   db: 0,
-// });
-const redis_bus = new Redis()
+const redis_bus = new Redis({
+  host: 'redis',
+  port: 6379,
+  password: '',
+  db: 0,
+});
+// const redis_bus = new Redis()
 const invokeOperationError = require('@errors/invokeOperationError');
-const api_key_limit= process.env.API_KEY_LIMIT || 3;
+const api_key_limit= 3;
 const getSearchResults = asyncHandler(async (req, res) => {
     const custom_query = req.query;
     custom_query.sort = '-published_at';
@@ -31,16 +31,25 @@ const postSearchResults = asyncHandler( async()=> {
     if(!entity_obj) return;
     const api_key_array=entity_obj.definition;
     //find the api key whoose count is less than the api_key_limit and increase the count by 1 and save the record
-    const payload= api_key_array.find( async (key) => await redis_bus.get(`api_key_count_${key}`)< api_key_limit);
-    console.log(payload);
-    const count=await redis_bus.incr(`api_key_count_${payload}`);
+    let payload,count;
+    for(let i=0; i<api_key_array.length; i++){
+        const api_key=api_key_array[i];
+        const key_count=await redis_bus.get(`api_key_count_${api_key}`);
+        if(key_count<api_key_limit){
+            count = await redis_bus.incr(`api_key_count_${api_key}`);
+            payload=api_key;
+            break;
+        }
+    }
+    // console.log(payload);
+    // const count=await redis_bus.incr(`api_key_count_${payload}`);
     console.log(payload," has frequecy ",count);
     if(!payload){
         console.log('no api key available');
         return;
     }
-    await redis_bus.incr(`api_key_count_${payload}`);
-    console.log("this api key",payload," has ",redis_bus.get(`api_key_count_${payload}`));
+    // await redis_bus.incr(`api_key_count_${payload}`);
+    // console.log("this api key",payload," has ",redis_bus.get(`api_key_count_${payload}`));
     const resp= await youtubeProvider.getSearchResults(payload);
 
     const videos=resp.items;
@@ -56,7 +65,7 @@ const postSearchResults = asyncHandler( async()=> {
             video_id:video.id.videoId
         });
         await video_obj.save();
-        console.log("saved video",video_obj);
+        console.log("saved video");
     }
 })
 const deleteSearchResults = asyncHandler( async()=> {

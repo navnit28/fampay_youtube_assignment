@@ -2,18 +2,19 @@ const EntityDefinition = require('@model/entityDefinitionSchema');
 const path = require('path');
 const readJson = require('readjson');
 const Redis = require('ioredis');
-// const redis_bus = new Redis({
-//   host: 'redis',
-//   port: 6379,
-//   password: '',
-//   db: 0,
-// });
-const redis_bus = new Redis();
+const redis_bus = new Redis({
+  host: 'redis',
+  port: 6379,
+  password: '',
+  db: 0,
+});
+// const redis_bus = new Redis();
 async function findOrCreate(group_id, entity_id, definition) {
     let cd = await EntityDefinition.findOne({
         entity_id,
     });
     if (!cd) {
+        console.log("new entity db created")
         cd = new EntityDefinition({
             entity_id,
             group_id,
