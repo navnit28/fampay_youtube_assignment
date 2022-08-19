@@ -43,9 +43,23 @@ const deleteSearchResults = asyncHandler( async()=> {
     console.log("deleted all videos");
 } )
 const searchVideos = asyncHandler( async(req, res) => {
+    const custom_query = req.query;
+    custom_query.sort = '-published_at';
+    const {filter,skip,limit,sort}=aqp({
+        skip: req.page * req.perPage,
+        ...custom_query,
+      });
+      console.log("filter",filter);
+    const videos=await youtubeSchema.find({
+        $text: { $search: req.query.q }
+    }).sort(sort).skip(skip).limit(limit).exec();
+    res.json({
+        "data":videos
+    })
 })
 module.exports={
     getSearchResults,
     postSearchResults,
-    deleteSearchResults
+    deleteSearchResults,
+    searchVideos
 }

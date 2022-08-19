@@ -3,4 +3,5 @@ const withPagination = require('@middleware/withPagination');
 const YoutubeController = require('@controller/client/youtube');
 module.exports = function (router) {
     router.get('/videos',[withPagination],YoutubeController.getSearchResults);
+    router.get('/search',[withPagination],YoutubeController.searchVideos);
 }

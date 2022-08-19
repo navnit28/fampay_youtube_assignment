@@ -14,12 +14,13 @@ const videoBody = {
     title: {
         type: String,
         index: true,
-        required: false
+        required: false,
+        // create text index
     },
     description: {
         type: String,
         index: true,
-        required: false
+        required: false,
     },
     published_at: {
         type: Date,
@@ -44,7 +45,11 @@ const videoSchema = mongoose.Schema(videoBody, {
     timestamps: true
 })
 
-
+// create text index for title and description
+videoSchema.index({
+    title: 'text',
+    description: 'text'
+})
 videoSchema.pre('save', async function (next) {
 
     next()
