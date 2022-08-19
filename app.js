@@ -95,8 +95,8 @@ require('./api/api')(apiParams);
 const cron=require('node-cron');
 const YoutubeController=require('@controller/client/youtube');
 // YoutubeController.deleteSearchResults();
-YoutubeController.postSearchResults();
-cron.schedule('*/2 * * * *', () => {
+// YoutubeController.postSearchResults();
+cron.schedule('*/1 * * * *', () => {
   YoutubeController.deleteSearchResults();
   YoutubeController.postSearchResults();
   console.log('running a task every two minutes', new Date());

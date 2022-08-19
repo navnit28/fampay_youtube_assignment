@@ -4,12 +4,19 @@ const youtubeProvider=new YouTubeProvider();
 const youtubeSchema=require('@model/videoSchema');
 const aqp = require('api-query-params');
 const entityDefinitionSchema=require('@model/entityDefinitionSchema');
-const api_key_limit= process.env.API_KEY_LIMIT || 5
+const Redis = require('ioredis');
+// const redis_bus = new Redis({
+//   host: 'redis',
+//   port: 6379,
+//   password: '',
+//   db: 0,
+// });
+const redis_bus = new Redis()
+const invokeOperationError = require('@errors/invokeOperationError');
+const api_key_limit= process.env.API_KEY_LIMIT || 3;
 const getSearchResults = asyncHandler(async (req, res) => {
     const custom_query = req.query;
-    //sort in descending order of published_at key
     custom_query.sort = '-published_at';
-    // custom_query.thread_id=req.query.thread_id;
     const {filter,skip,limit,sort}=aqp({
         skip: req.page * req.perPage,
         ...custom_query,
@@ -24,17 +31,17 @@ const postSearchResults = asyncHandler( async()=> {
     if(!entity_obj) return;
     const api_key_array=entity_obj.definition;
     //find the api key whoose count is less than the api_key_limit and increase the count by 1 and save the record
-    const payload=api_key_array.find(key=>key.count<api_key_limit);
+    const payload= api_key_array.find( async (key) => await redis_bus.get(`api_key_count_${key}`)< api_key_limit);
+    console.log(payload);
+    const count=await redis_bus.incr(`api_key_count_${payload}`);
+    console.log(payload," has frequecy ",count);
     if(!payload){
         console.log('no api key available');
         return;
     }
-    payload.count++;
-    entity_obj.markModified('definition');
-    await entity_obj.save();
-    // const payload=api_key_array.find(key=>key.count<api_key_limit);
-    console.log(payload.api_key)
-    const resp= await youtubeProvider.getSearchResults(payload.api_key);
+    await redis_bus.incr(`api_key_count_${payload}`);
+    console.log("this api key",payload," has ",redis_bus.get(`api_key_count_${payload}`));
+    const resp= await youtubeProvider.getSearchResults(payload);
 
     const videos=resp.items;
     for(let i=0;i<videos.length;i++){
@@ -53,25 +60,29 @@ const postSearchResults = asyncHandler( async()=> {
     }
 })
 const deleteSearchResults = asyncHandler( async()=> {
-    //delete the entire collection
     await youtubeSchema.deleteMany({});
     console.log("deleted all videos");
 } )
 const searchVideos = asyncHandler( async(req, res) => {
-    const custom_query = req.query;
-    custom_query.sort = '-published_at';
-    const {filter,skip,limit,sort}=aqp({
-        skip: req.page * req.perPage,
-        ...custom_query,
-      });
-      console.log("filter",filter);
-    const videos=await youtubeSchema.find({
-        $text: { $search: req.query.q }},
-        {score: { $meta: "textScore" } }
-    ).sort({ score: { $meta: "textScore" } }).skip(skip).limit(limit).exec();
-    res.json({
-        "data":videos
-    })
+    try{
+        const custom_query = req.query;
+        const {filter,skip,limit,sort}=aqp({
+            skip: req.page * req.perPage,
+            ...custom_query,
+        });
+        console.log("filter",filter);
+        const videos=await youtubeSchema.find({
+            $text: { $search: req.query.q }},
+            {score: { $meta: "textScore" } }
+        ).sort({ score: { $meta: "textScore" } }).skip(skip).limit(limit).exec();
+        res.json({
+            "data":videos
+        })
+    }
+    catch(error){
+        console.log(error);
+        invokeOperationError("errors.videos.failed.search")
+    }
 })
 module.exports={
     getSearchResults,

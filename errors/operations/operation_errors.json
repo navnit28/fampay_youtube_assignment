@@ -75,5 +75,13 @@
     "errors.player.doesnotexist.ingame": {
         "status": 404,
         "message": "This Player wallet isn't linked to any NFTWorlds account ingame"
+    },
+    "errors.api_key.failed.save":{
+        "status": 400,
+        "message": "Failed to save API key"
+    },
+    "errors.videos.failed.search":{
+        "status": 400,
+        "message": "Failed to search videos"
     }
 }

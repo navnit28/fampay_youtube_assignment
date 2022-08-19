@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
 
-const url = process.env.MONGODB_URI || 'mongodb://mongo:27017/fampay-test';
+const url = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/fampay-test';
+// mongodb://127.0.0.1:27017/fampay-test
+// mongodb://mongo:27017/fampay-test
 
 if (process.env.MONGO_CONFIG === 'aws') {
   mongoose.connect(url, {
