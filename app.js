@@ -1,7 +1,7 @@
 require('dotenv').config();
 require('module-alias/register');
 //require('@initializer/elasticsearch/elasticsearch-indexes.js');
-// require('@initializer/definition/definitionSeed.js');
+require('@initializer/definition/definitionSeed.js');
 require('./config/database');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -95,10 +95,10 @@ require('./api/api')(apiParams);
 const cron=require('node-cron');
 const YoutubeController=require('@controller/client/youtube');
 // YoutubeController.deleteSearchResults();
-// YoutubeController.postSearchResults();
+YoutubeController.postSearchResults();
 cron.schedule('*/2 * * * *', () => {
-  YoutubeController.deleteSearchResults();
-  YoutubeController.postSearchResults();
+  // YoutubeController.deleteSearchResults();
+  // YoutubeController.postSearchResults();
   console.log('running a task every two minutes', new Date());
   
 });

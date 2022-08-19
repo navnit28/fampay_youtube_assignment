@@ -3,6 +3,8 @@ const asyncHandler = require('express-async-handler');
 const youtubeProvider=new YouTubeProvider();
 const youtubeSchema=require('@model/videoSchema');
 const aqp = require('api-query-params');
+const entityDefinitionSchema=require('@model/entityDefinitionSchema');
+const api_key_limit= process.env.API_KEY_LIMIT || 5
 const getSearchResults = asyncHandler(async (req, res) => {
     const custom_query = req.query;
     //sort in descending order of published_at key
@@ -18,9 +20,21 @@ const getSearchResults = asyncHandler(async (req, res) => {
     })
 })
 const postSearchResults = asyncHandler( async()=> {
-    const resp= await youtubeProvider.getSearchResults();
-    // console.log("got items here",resp.items);
-    // save to db
+    const entity_obj=await entityDefinitionSchema.findOne({entity_id:'api_key'});
+    const api_key_array=entity_obj.definition;
+    //find the api key whoose count is less than the api_key_limit and increase the count by 1 and save the record
+    const payload=api_key_array.find(key=>key.count<api_key_limit);
+    if(!payload){
+        console.log('no api key available');
+        return;
+    }
+    payload.count++;
+    entity_obj.markModified('definition');
+    await entity_obj.save();
+    // const payload=api_key_array.find(key=>key.count<api_key_limit);
+    console.log(payload.api_key)
+    const resp= await youtubeProvider.getSearchResults(payload.api_key);
+
     const videos=resp.items;
     for(let i=0;i<videos.length;i++){
         const video=videos[i];

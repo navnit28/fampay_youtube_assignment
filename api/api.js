@@ -29,6 +29,9 @@ module.exports = function (apiParams) {
   api.use('/youtube',youtube_router);
   require('./youtube')(youtube_router)
 
+  const api_key_router = express.Router();
+  api.use('/api_key',api_key_router);
+  require('./api_key')(api_key_router)
 
 
   api.use(operationsErrorMiddleware);
